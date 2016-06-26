@@ -37,6 +37,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$rootProject.retrofit"
     compile "com.squareup.retrofit2:converter-gson:$rootProject.retrofit"
     compile "com.google.code.gson:gson:$rootProject.gson"
+    compile "com.rengwuxian.materialedittext:library:$rootProject.rengwuxian"
 
     // Dagger dependencies
     provided 'javax.annotation:jsr250-api:1.0'

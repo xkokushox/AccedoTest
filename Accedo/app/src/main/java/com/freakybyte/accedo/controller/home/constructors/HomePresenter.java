@@ -7,7 +7,7 @@ import android.widget.ImageView;
  */
 public interface HomePresenter {
 
-    void saveUser();
+    void saveUser(String username);
 
     void doTurn(ImageView imageBoard, int position);
 
@@ -17,11 +17,13 @@ public interface HomePresenter {
 
     void flipBackAllCards();
 
+    void flipAllCards();
+
     void checkCards();
 
     boolean isGameWon();
 
-    void startTimer();
+    void startTimer(int iTimer);
 
     void onDestroy();
 

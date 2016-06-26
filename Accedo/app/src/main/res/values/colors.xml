@@ -39,4 +39,6 @@
     <color name="silver">#bdc3c7</color>
     <color name="concrete">#95a5a6</color>
     <color name="asbestos">#7f8c8d</color>
+
+    <color name="thumbColor">#66aaaaaa</color>
 </resources>

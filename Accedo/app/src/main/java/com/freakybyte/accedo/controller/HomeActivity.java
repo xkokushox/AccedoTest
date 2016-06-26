@@ -4,15 +4,18 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.freakybyte.accedo.AccedoApplication;
 import com.freakybyte.accedo.R;
+import com.freakybyte.accedo.controller.dialog.SaveScoreDialog;
 import com.freakybyte.accedo.controller.home.constructors.HomeView;
 import com.freakybyte.accedo.controller.home.di.DaggerHomeComponent;
 import com.freakybyte.accedo.controller.home.di.HomeModule;
 import com.freakybyte.accedo.controller.home.impl.HomePresenterImpl;
 import com.freakybyte.accedo.di.manager.WidgetManager;
 import com.freakybyte.accedo.di.module.WidgetModule;
+import com.freakybyte.accedo.listener.ListenerDialog;
 import com.freakybyte.accedo.util.DebugUtils;
 
 import javax.inject.Inject;
@@ -44,6 +47,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
     private ImageView mImgViewCard4x2;
     private ImageView mImgViewCard4x3;
     private ImageView mImgViewCard4x4;
+    private TextView mTxtScore;
 
 
     @Override
@@ -99,15 +103,39 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
     }
 
     @Override
-    public void restartGame() {
+    public void onGameWon(int iScore) {
+        mWidgetManager.createShortToast(R.string.toast_won);
+        SaveScoreDialog dialogScore = new SaveScoreDialog();
+        dialogScore.setListenerDialog(new ListenerDialog() {
+            @Override
+            public void btnOkClick(String username) {
+                mPresenter.saveUser(username);
+                DebugUtils.getSingleton().logDebug(TAG, "Username:: "+ username);
+            }
 
-
+            @Override
+            public void btnOnCancel() {
+                mPresenter.restartBoard();
+            }
+        });
+        dialogScore.show(getSupportFragmentManager(), SaveScoreDialog.TAG);
     }
 
     @Override
-    public void wonGame() {
-        mWidgetManager.createShortToast("Ganaste!!!");
+    public void onGameLost() {
+        mWidgetManager.createShortToast(R.string.toast_lost);
     }
+
+    @Override
+    public void updateScore(final int iScore) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getTxtScore().setText(String.format(getString(R.string.home_score), iScore));
+            }
+        });
+    }
+
 
     @Override
     public void openScoreScreen() {
@@ -228,9 +256,15 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.flipBackAllCards();
+    }
+
+    @Override
     protected void onDestroy() {
-        mPresenter.onDestroy();
         super.onDestroy();
+        mPresenter.onDestroy();
     }
 
     private ImageView getImgViewScore() {
@@ -333,6 +367,12 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
         if (mImgViewCard4x4 == null)
             mImgViewCard4x4 = (ImageView) findViewById(R.id.imgViewCard4x4);
         return mImgViewCard4x4;
+    }
+
+    private TextView getTxtScore() {
+        if (mTxtScore == null)
+            mTxtScore = (TextView) findViewById(R.id.txtScore);
+        return mTxtScore;
     }
 
 }

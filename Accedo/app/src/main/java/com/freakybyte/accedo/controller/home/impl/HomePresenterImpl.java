@@ -3,11 +3,11 @@ package com.freakybyte.accedo.controller.home.impl;
 import android.os.CountDownTimer;
 import android.widget.ImageView;
 
-import com.freakybyte.accedo.R;
 import com.freakybyte.accedo.controller.home.constructors.HomePresenter;
 import com.freakybyte.accedo.controller.home.constructors.HomeView;
 import com.freakybyte.accedo.di.manager.SqliteManager;
 import com.freakybyte.accedo.model.CardModel;
+import com.freakybyte.accedo.model.ScoreModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +35,10 @@ public class HomePresenterImpl implements HomePresenter {
 
     private int pairs = 8;
     private boolean bAllowClick;
+    private boolean bAllowFlipBack;
+    private int iUserScore;
+    private final int iCorrectPair = 100;
+    private final int iInCorrectPair = 20;
 
     @Inject
     public HomePresenterImpl(SqliteManager mSqliteManager, HomeView homeView) {
@@ -43,8 +47,9 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     @Override
-    public void saveUser() {
-
+    public void saveUser(String username) {
+        mSqliteManager.getScoreDao().insertScore(new ScoreModel(username, iUserScore));
+        restartBoard();
     }
 
     @Override
@@ -89,36 +94,60 @@ public class HomePresenterImpl implements HomePresenter {
         c2 = null;
         bAllowClick = true;
 
-        mHomeView.restartGame();
+        iUserScore = 0;
+        mHomeView.updateScore(iUserScore);
+        flipAllCards();
 
     }
 
     @Override
     public void flipBackAllCards() {
-        for (int a = 0; a < cardsList.size(); a++) {
-            if (!cardsList.get(a).isMatched())
-                cardsView.get(a).setImageResource(R.drawable.card_bg);
-        }
-        bAllowClick = true;
+        if (bAllowFlipBack)
+            for (int a = 0; a < cardsList.size(); a++) {
+                if (!cardsList.get(a).isMatched())
+                    mHomeView.flipBack(cardsView.get(a));
+            }
         c1 = null;
         c2 = null;
     }
 
     @Override
+    public void flipAllCards() {
+        bAllowClick = false;
+        bAllowFlipBack = false;
+
+        for (int a = 0; a < cardsList.size(); a++)
+            mHomeView.flipCard(cardsView.get(a), cardsList.get(a).getId());
+
+        startTimer(3000);
+    }
+
+    @Override
     public void checkCards() {
         if (c1.getId() == c2.getId()) {
-            c1.setMatched(true); //flags the button as having been matched
+            c1.setMatched(true);
             c2.setMatched(true);
+            iUserScore += iCorrectPair;
+            mHomeView.updateScore(iUserScore);
             if (isGameWon()) {
-                mHomeView.wonGame();
+                mHomeView.onGameWon(iUserScore);
             } else {
                 c1 = null;
                 c2 = null;
             }
         } else {
-            bAllowClick = false;
-            startTimer();
+            iUserScore -= iInCorrectPair;
+
+            if (iUserScore > 0) {
+                mHomeView.updateScore(iUserScore);
+                bAllowClick = false;
+                startTimer(500);
+            } else {
+                mHomeView.onGameLost();
+                restartBoard();
+            }
         }
+
     }
 
     @Override
@@ -132,23 +161,20 @@ public class HomePresenterImpl implements HomePresenter {
     }
 
     @Override
-    public void startTimer() {
-        if (cdTimer == null) {
-            cdTimer = new CountDownTimer(1000, 500) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                }
+    public void startTimer(final int iTimer) {
+        cdTimer = new CountDownTimer(iTimer, 500) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+            }
 
-                @Override
-                public void onFinish() {
-                    flipBackAllCards();
-                }
-            };
-            cdTimer.start();
-        } else {
-            cdTimer.cancel();
-            cdTimer.start();
-        }
+            @Override
+            public void onFinish() {
+                bAllowFlipBack = true;
+                bAllowClick = true;
+                flipBackAllCards();
+            }
+        };
+        cdTimer.start();
     }
 
     @Override

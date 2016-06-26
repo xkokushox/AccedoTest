@@ -9,9 +9,11 @@ public interface HomeView {
 
     void showLoader();
 
-    void restartGame();
+    void onGameWon(int iScore);
 
-    void wonGame();
+    void onGameLost();
+
+    void updateScore(int iScore);
 
     void openScoreScreen();
 

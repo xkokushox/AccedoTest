@@ -14,9 +14,17 @@ import javax.inject.Singleton;
 public class SqliteManager {
 
     private ScoreDAO mScoreDao;
+    private Context mContext;
 
     @Inject
     public SqliteManager(Context context) {
-        mScoreDao = new ScoreDAO(context);
+        mContext = context;
     }
+
+    public ScoreDAO getScoreDao() {
+        if (mScoreDao == null)
+            mScoreDao = new ScoreDAO(mContext);
+        return mScoreDao;
+    }
+
 }
