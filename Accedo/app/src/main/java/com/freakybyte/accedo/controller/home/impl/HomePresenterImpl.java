@@ -26,7 +26,6 @@ public class HomePresenterImpl implements HomePresenter {
 
     private static CountDownTimer cdTimer = null;
 
-
     private List<CardModel> cardsList = new ArrayList<>();
     private List<ImageView> cardsView = new ArrayList<>();
 
@@ -54,7 +53,10 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void doTurn(ImageView imageBoard, int position) {
-        if (bAllowClick)
+        if (mHomeView == null)
+            return;
+
+        if (bAllowClick) {
             if (!cardsList.get(position).isMatched())
                 if (c1 == null) {
                     c1 = cardsList.get(position);
@@ -64,6 +66,7 @@ public class HomePresenterImpl implements HomePresenter {
                     mHomeView.flipCard(imageBoard, c2.getId());
                     checkCards();
                 }
+        }
     }
 
     @Override
@@ -73,6 +76,9 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void restartBoard() {
+        if (mHomeView == null)
+            return;
+
         List<Integer> cardVals = new ArrayList<>();
 
         cardVals.clear();
@@ -102,6 +108,9 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void flipBackAllCards() {
+        if (mHomeView == null)
+            return;
+
         if (bAllowFlipBack)
             for (int a = 0; a < cardsList.size(); a++) {
                 if (!cardsList.get(a).isMatched())
@@ -113,6 +122,9 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void flipAllCards() {
+        if (mHomeView == null)
+            return;
+
         bAllowClick = false;
         bAllowFlipBack = false;
 
@@ -124,6 +136,9 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void checkCards() {
+        if (mHomeView == null)
+            return;
+
         if (c1.getId() == c2.getId()) {
             c1.setMatched(true);
             c2.setMatched(true);
@@ -132,6 +147,7 @@ public class HomePresenterImpl implements HomePresenter {
             if (isGameWon()) {
                 mHomeView.onGameWon(iUserScore);
             } else {
+                bAllowClick = true;
                 c1 = null;
                 c2 = null;
             }
@@ -179,6 +195,6 @@ public class HomePresenterImpl implements HomePresenter {
 
     @Override
     public void onDestroy() {
-
+        mHomeView = null;
     }
 }

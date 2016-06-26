@@ -7,17 +7,11 @@ import android.widget.ImageView;
  */
 public interface HomeView {
 
-    void showLoader();
-
     void onGameWon(int iScore);
 
     void onGameLost();
 
     void updateScore(int iScore);
-
-    void openScoreScreen();
-
-    void onErrorUser();
 
     void flipBack(ImageView imgCard);
 

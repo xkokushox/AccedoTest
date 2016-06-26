@@ -1,5 +1,6 @@
-package com.freakybyte.accedo.controller;
+package com.freakybyte.accedo.controller.home.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.freakybyte.accedo.controller.home.constructors.HomeView;
 import com.freakybyte.accedo.controller.home.di.DaggerHomeComponent;
 import com.freakybyte.accedo.controller.home.di.HomeModule;
 import com.freakybyte.accedo.controller.home.impl.HomePresenterImpl;
+import com.freakybyte.accedo.controller.score.ui.ScoreActivity;
 import com.freakybyte.accedo.di.manager.WidgetManager;
 import com.freakybyte.accedo.di.module.WidgetModule;
 import com.freakybyte.accedo.listener.ListenerDialog;
@@ -97,10 +99,6 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
         mPresenter.restartBoard();
     }
 
-    @Override
-    public void showLoader() {
-
-    }
 
     @Override
     public void onGameWon(int iScore) {
@@ -110,7 +108,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
             @Override
             public void btnOkClick(String username) {
                 mPresenter.saveUser(username);
-                DebugUtils.getSingleton().logDebug(TAG, "Username:: "+ username);
+                DebugUtils.getSingleton().logDebug(TAG, "Username:: " + username);
             }
 
             @Override
@@ -134,17 +132,6 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
                 getTxtScore().setText(String.format(getString(R.string.home_score), iScore));
             }
         });
-    }
-
-
-    @Override
-    public void openScoreScreen() {
-
-    }
-
-    @Override
-    public void onErrorUser() {
-
     }
 
     @Override
@@ -199,7 +186,8 @@ public class HomeActivity extends AppCompatActivity implements HomeView, View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.imgViewScore:
-
+                Intent mIntentScore = new Intent(HomeActivity.this, ScoreActivity.class);
+                startActivity(mIntentScore);
                 break;
             case R.id.imgViewCard1x1:
                 mPresenter.doTurn(getmImgViewCard1x1(), 0);

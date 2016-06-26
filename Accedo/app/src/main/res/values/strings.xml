@@ -3,7 +3,7 @@
 
 
     <string name="home_score">Score: %d</string>
-
+    <string name="score_toolbar_title">HighScores</string>
 
     <string name="dialog_score_title">Save your score</string>
 
@@ -11,5 +11,6 @@
     <string name="toast_lost">You lost, please try again</string>
 
     <string name="error_invalid_user">Type valid user</string>
+    <string name="error_empty_list_items">Type valid user</string>
 
 </resources>

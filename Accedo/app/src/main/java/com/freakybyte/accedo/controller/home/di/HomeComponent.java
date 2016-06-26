@@ -1,6 +1,6 @@
 package com.freakybyte.accedo.controller.home.di;
 
-import com.freakybyte.accedo.controller.HomeActivity;
+import com.freakybyte.accedo.controller.home.ui.HomeActivity;
 import com.freakybyte.accedo.di.component.SqliteComponent;
 import com.freakybyte.accedo.di.module.WidgetModule;
 import com.freakybyte.accedo.di.scope.ActivityScoped;

@@ -5,6 +5,7 @@ package com.freakybyte.accedo.model;
  */
 public class ScoreModel {
 
+    private int position;
     private String name;
     private int score;
 
@@ -31,5 +32,13 @@ public class ScoreModel {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

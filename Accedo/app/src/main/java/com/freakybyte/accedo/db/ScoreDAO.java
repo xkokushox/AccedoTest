@@ -56,7 +56,7 @@ public class ScoreDAO {
     public List<ScoreModel> getAllScores() {
 
         List<ScoreModel> aListScore = new ArrayList<>();
-        String orderBy = ID_SCORE + " ASC";
+        String orderBy = ID_SCORE + " DESC";
 
 
         try {
@@ -72,6 +72,7 @@ public class ScoreDAO {
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
                 ScoreModel mScore = new ScoreModel();
+                mScore.setPosition(i + 1);
                 mScore.setName(cursor.getString(_NAME));
                 mScore.setScore(cursor.getInt(_SCORE));
                 aListScore.add(mScore);
