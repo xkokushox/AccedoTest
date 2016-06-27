@@ -41,10 +41,11 @@ public class ScoreActivity extends AppCompatActivity implements ScoreView {
     private TextView txtEmptyView;
     private Toolbar mToolbar;
 
-
     private LinearLayoutManager mLayoutManager;
 
     private ScoreListAdapter mAdapter;
+
+    private ScoreModel mScoreModel;
 
 
     @Override
@@ -52,6 +53,7 @@ public class ScoreActivity extends AppCompatActivity implements ScoreView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score);
 
+        mScoreModel = getIntent().getParcelableExtra(ScoreModel.TAG);
 
         DaggerScoreComponent.builder()
                 .sqliteComponent(((AccedoApplication) getApplication()).getSqliteComponent())
@@ -69,8 +71,9 @@ public class ScoreActivity extends AppCompatActivity implements ScoreView {
             }
         });
 
-
         getListServices().setAdapter(getListAdapter());
+
+        getListAdapter().setCurrentScore(mScoreModel);
 
         mPresenter.getHighScore();
     }

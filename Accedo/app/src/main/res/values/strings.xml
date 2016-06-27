@@ -3,11 +3,12 @@
 
 
     <string name="home_score">Score: %d</string>
+    <string name="home_your_score">%1$s score:: %2$d</string>
     <string name="score_toolbar_title">HighScores</string>
 
     <string name="dialog_score_title">Save your score</string>
 
-    <string name="toast_won">You Won!!</string>
+    <string name="toast_won">You Finished the Game!!</string>
     <string name="toast_lost">You lost, please try again</string>
 
     <string name="error_invalid_user">Type valid user</string>

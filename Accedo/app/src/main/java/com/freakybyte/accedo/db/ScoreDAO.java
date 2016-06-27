@@ -37,6 +37,12 @@ public class ScoreDAO {
         dbAdapter = new DBAdapter(context);
     }
 
+    /**
+     * Method that insert the score in the db
+     *
+     * @param score The score that is going to be saved in the data base
+     */
+
     public boolean insertScore(ScoreModel score) {
 
         dbAdapter.begginTransaction();
@@ -53,6 +59,10 @@ public class ScoreDAO {
         return success;
     }
 
+    /**
+     * Retrieves a list of all the scores saved in the db
+     *
+     */
     public List<ScoreModel> getAllScores() {
 
         List<ScoreModel> aListScore = new ArrayList<>();

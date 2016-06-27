@@ -81,7 +81,12 @@ public class SaveScoreDialog extends DialogFragment implements View.OnClickListe
     }
 
     private boolean isValidUser() {
-        return AndroidUtil.isValidField(getEditUserName().getText().toString());
+        boolean isValid = AndroidUtil.isValidField(getEditUserName().getText().toString());
+
+        if (!isValid)
+            getEditUserName().setError(getString(R.string.error_invalid_user));
+
+        return isValid;
     }
 
     @Override

@@ -5,7 +5,11 @@ package com.freakybyte.accedo.controller.score.constructors;
  */
 public interface ScorePresenter {
 
+    /**
+     * Get the list of all the scores from the database in DESC order.
+     */
     void getHighScore();
+
 
     void onDestroy();
 }

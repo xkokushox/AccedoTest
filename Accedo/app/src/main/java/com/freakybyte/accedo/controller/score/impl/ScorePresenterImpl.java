@@ -1,5 +1,7 @@
 package com.freakybyte.accedo.controller.score.impl;
 
+import android.support.annotation.Nullable;
+
 import com.freakybyte.accedo.controller.score.constructors.ScorePresenter;
 import com.freakybyte.accedo.controller.score.constructors.ScoreView;
 import com.freakybyte.accedo.di.manager.SqliteManager;
@@ -17,7 +19,7 @@ public class ScorePresenterImpl implements ScorePresenter {
 
 
     @Inject
-    public ScorePresenterImpl(SqliteManager mSqliteManager, ScoreView screenView) {
+    public ScorePresenterImpl(@Nullable SqliteManager mSqliteManager, @Nullable ScoreView screenView) {
         mScoreView = screenView;
         this.mSqliteManager = mSqliteManager;
     }

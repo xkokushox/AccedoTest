@@ -20,6 +20,7 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ItemScoreWrapper> {
     public static final String TAG = "ScoreListAdapter";
     private ArrayList<ScoreModel> aListScore = new ArrayList<>();
     private Activity mActivity;
+    private ScoreModel mCurrentScore;
 
     /**
      * @param context
@@ -43,6 +44,18 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ItemScoreWrapper> {
         viewHolder.getTxtScoreUser().setText(mScore.getName());
         viewHolder.getTxtScorePoints().setText(String.valueOf(mScore.getScore()));
 
+        if (mCurrentScore != null) {
+            if (mCurrentScore.getName().equals(mScore.getName()) && mCurrentScore.getScore() == mScore.getScore()) {
+                viewHolder.getTxtScorePosition().setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
+                viewHolder.getTxtScoreUser().setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
+                viewHolder.getTxtScorePoints().setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
+            } else {
+                viewHolder.getTxtScorePosition().setTextColor(mActivity.getResources().getColor(R.color.black));
+                viewHolder.getTxtScoreUser().setTextColor(mActivity.getResources().getColor(R.color.black));
+                viewHolder.getTxtScorePoints().setTextColor(mActivity.getResources().getColor(R.color.black));
+            }
+        }
+
     }
 
 
@@ -55,4 +68,7 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ItemScoreWrapper> {
         return aListScore;
     }
 
+    public void setCurrentScore(ScoreModel mCurrentScore) {
+        this.mCurrentScore = mCurrentScore;
+    }
 }

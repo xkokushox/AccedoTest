@@ -1,6 +1,7 @@
 package com.freakybyte.accedo.controller.home.impl;
 
 import android.os.CountDownTimer;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.freakybyte.accedo.controller.home.constructors.HomePresenter;
@@ -24,7 +25,7 @@ public class HomePresenterImpl implements HomePresenter {
 
     private SqliteManager mSqliteManager;
 
-    private static CountDownTimer cdTimer = null;
+    private CountDownTimer cdTimer = null;
 
     private List<CardModel> cardsList = new ArrayList<>();
     private List<ImageView> cardsView = new ArrayList<>();
@@ -34,20 +35,19 @@ public class HomePresenterImpl implements HomePresenter {
 
     private int pairs = 8;
     private boolean bAllowClick;
-    private boolean bAllowFlipBack;
     private int iUserScore;
-    private final int iCorrectPair = 100;
-    private final int iInCorrectPair = 20;
+    private final int iCorrectPair = 2;
+    private final int iInCorrectPair = 1;
 
     @Inject
-    public HomePresenterImpl(SqliteManager mSqliteManager, HomeView homeView) {
+    public HomePresenterImpl(@Nullable SqliteManager mSqliteManager, @Nullable HomeView homeView) {
         mHomeView = homeView;
         this.mSqliteManager = mSqliteManager;
     }
 
     @Override
-    public void saveUser(String username) {
-        mSqliteManager.getScoreDao().insertScore(new ScoreModel(username, iUserScore));
+    public void saveUser(ScoreModel score) {
+        mSqliteManager.getScoreDao().insertScore(score);
         restartBoard();
     }
 
@@ -58,13 +58,17 @@ public class HomePresenterImpl implements HomePresenter {
 
         if (bAllowClick) {
             if (!cardsList.get(position).isMatched())
-                if (c1 == null) {
+                if (c1 == null && !cardsList.get(position).isFlipped()) {
+                    cardsList.get(position).setFlipped(true);
                     c1 = cardsList.get(position);
                     mHomeView.flipCard(imageBoard, c1.getId());
-                } else if (c2 == null) {
+                } else if (c2 == null && !cardsList.get(position).isFlipped()) {
+                    cardsList.get(position).setFlipped(true);
                     c2 = cardsList.get(position);
                     mHomeView.flipCard(imageBoard, c2.getId());
-                    checkCards();
+
+                    bAllowClick = false;
+                    startTimer(1000);
                 }
         }
     }
@@ -102,8 +106,8 @@ public class HomePresenterImpl implements HomePresenter {
 
         iUserScore = 0;
         mHomeView.updateScore(iUserScore);
-        flipAllCards();
-
+        changeVisibilityCards();
+        flipBackAllCards();
     }
 
     @Override
@@ -111,11 +115,14 @@ public class HomePresenterImpl implements HomePresenter {
         if (mHomeView == null)
             return;
 
-        if (bAllowFlipBack)
-            for (int a = 0; a < cardsList.size(); a++) {
-                if (!cardsList.get(a).isMatched())
-                    mHomeView.flipBack(cardsView.get(a));
+        for (int a = 0; a < cardsList.size(); a++) {
+            if (!cardsList.get(a).isMatched()) {
+                cardsList.get(a).setFlipped(false);
+                mHomeView.flipBack(cardsView.get(a));
+            } else {
+                cardsList.get(a).setFlipped(true);
             }
+        }
         c1 = null;
         c2 = null;
     }
@@ -126,12 +133,17 @@ public class HomePresenterImpl implements HomePresenter {
             return;
 
         bAllowClick = false;
-        bAllowFlipBack = false;
 
         for (int a = 0; a < cardsList.size(); a++)
             mHomeView.flipCard(cardsView.get(a), cardsList.get(a).getId());
 
         startTimer(3000);
+    }
+
+    @Override
+    public void changeVisibilityCards() {
+        for (int a = 0; a < cardsList.size(); a++)
+            mHomeView.changeVisibilityCard(cardsView.get(a), !cardsList.get(a).isMatched());
     }
 
     @Override
@@ -144,25 +156,20 @@ public class HomePresenterImpl implements HomePresenter {
             c2.setMatched(true);
             iUserScore += iCorrectPair;
             mHomeView.updateScore(iUserScore);
-            if (isGameWon()) {
-                mHomeView.onGameWon(iUserScore);
-            } else {
-                bAllowClick = true;
-                c1 = null;
-                c2 = null;
-            }
+            c1 = null;
+            c2 = null;
+            changeVisibilityCards();
+
+            if (isGameWon())
+                mHomeView.onGameFinished(iUserScore);
         } else {
             iUserScore -= iInCorrectPair;
 
-            if (iUserScore > 0) {
-                mHomeView.updateScore(iUserScore);
-                bAllowClick = false;
-                startTimer(500);
-            } else {
-                mHomeView.onGameLost();
-                restartBoard();
-            }
+            mHomeView.updateScore(iUserScore);
+            flipBackAllCards();
         }
+
+        bAllowClick = true;
 
     }
 
@@ -185,9 +192,7 @@ public class HomePresenterImpl implements HomePresenter {
 
             @Override
             public void onFinish() {
-                bAllowFlipBack = true;
-                bAllowClick = true;
-                flipBackAllCards();
+                checkCards();
             }
         };
         cdTimer.start();
@@ -196,5 +201,10 @@ public class HomePresenterImpl implements HomePresenter {
     @Override
     public void onDestroy() {
         mHomeView = null;
+        cdTimer = null;
+        cardsList = null;
+        cardsView = null;
+        c1 = null;
+        c2 = null;
     }
 }

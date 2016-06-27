@@ -6,6 +6,7 @@ package com.freakybyte.accedo.model;
 public class CardModel {
     private int id;
     private boolean matched = false;
+    private boolean flipped = false;
 
     public int getId() {
         return id;
@@ -21,5 +22,13 @@ public class CardModel {
 
     public void setMatched(boolean matched) {
         this.matched = matched;
+    }
+
+    public boolean isFlipped() {
+        return flipped;
+    }
+
+    public void setFlipped(boolean flipped) {
+        this.flipped = flipped;
     }
 }
