@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Accedo</string>
-
+    <string name="app_name">Colour Memory</string>
 
     <string name="home_score">Score: %d</string>
     <string name="home_your_score">%1$s score:: %2$d</string>
